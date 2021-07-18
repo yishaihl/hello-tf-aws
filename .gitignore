@@ -5,7 +5,7 @@
 *.tfstate
 *.tfstate.*
 *.terraform.lock.*
-*.kubeconfig_*
+kubeconfig_*
 
 # Crash log files
 crash.log
