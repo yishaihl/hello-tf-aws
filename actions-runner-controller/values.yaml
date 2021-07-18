@@ -1,0 +1,170 @@
+# Default values for actions-runner-controller.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+labels: {}
+
+replicaCount: 1
+
+syncPeriod: 10m
+
+# The controller tries its best not to repeat the duplicate GitHub API call
+# within this duration.
+# Defaults to syncPeriod - 10s.
+#githubAPICacheDuration: 30s
+
+# The URL of your GitHub Enterprise server, if you're using one.
+#githubEnterpriseServerURL: https://github.example.com
+
+# Only 1 authentication method can be deployed at a time
+# Uncomment the configuration you are applying and fill in the details
+authSecret:
+  create: false
+  name: "controller-manager"
+  ### GitHub Apps Configuration
+  #github_app_id: ""
+  #github_app_installation_id: ""
+  #github_app_private_key: |
+  ### GitHub PAT Configuration
+  #github_token: ""
+
+dockerRegistryMirror: ""
+image:
+  repository: "summerwind/actions-runner-controller"
+  actionsRunnerRepositoryAndTag: "summerwind/actions-runner:latest"
+  dindSidecarRepositoryAndTag: "docker:dind"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podLabels: {}
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+securityContext:
+  {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 443
+
+metrics:
+  serviceMonitor: false
+  serviceMonitorLabels: {}
+  port: 8443
+  proxy:
+    enabled: true
+    image:
+      repository: quay.io/brancz/kube-rbac-proxy
+      tag: v0.10.0
+
+resources:
+  {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Leverage a PriorityClass to ensure your pods survive resource shortages
+# ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
+# PriorityClass: system-cluster-critical
+priorityClassName: ""
+
+env:
+  {}
+  # http_proxy: "proxy.com:8080"
+  # https_proxy: "proxy.com:8080"
+  # no_proxy: ""
+
+scope:
+  # If true, the controller will only watch custom resources in a single namespace
+  singleNamespace: false
+  # If `scope.singleNamespace=true`, the controller will only watch custom resources in this namespace
+  # The default value is "", which means the namespace of the controller
+  watchNamespace: ""
+
+githubWebhookServer:
+  enabled: false
+  replicaCount: 1
+  syncPeriod: 10m
+  secret:
+    create: false
+    name: "github-webhook-server"
+    ### GitHub Webhook Configuration
+    github_webhook_secret_token: ""
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+  podAnnotations: {}
+  podLabels: {}
+  podSecurityContext: {}
+  # fsGroup: 2000
+  securityContext: {}
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  priorityClassName: ""
+  service:
+    type: ClusterIP
+    annotations: {}
+    ports:
+      - port: 80
+        targetPort: http
+        protocol: TCP
+        name: http
+        #nodePort: someFixedPortForUseWithTerraformCdkCfnEtc
+  ingress:
+    enabled: false
+    annotations:
+      {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: chart-example.local
+        paths: []
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
