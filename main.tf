@@ -49,7 +49,7 @@
     module "vpc" {
     source  = "terraform-aws-modules/vpc/aws"
     version = "3.2.0"
-    name    = "aws-eks-tf"
+    name    = "aws-eks-tf-vpc"
     cidr    = "10.0.0.0/16"
     azs     = data.aws_availability_zones.available.names
     private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24" ]
@@ -89,4 +89,10 @@
         },
         ]
         worker_additional_security_group_ids = [aws_security_group.all_worker_mgmt.id]
+        provider "kubernetes" {
+            host = data.aws_eks_cluster.cluster.endpoint
+            cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+            token = data.aws_eks_cluster_auth.cluster.token
+            load_config_file = false
+        }
     }
