@@ -6,10 +6,12 @@ spec:
   gateways:
   - istio-rollout-gateway
   hosts:
-  - istio-rollout.apps.argoproj.io
-  - istio-rollout.local
+  - istio.dev.tiktak.egged.co.il	
   http:
   - name: primary
+    Match:
+      Uri:
+        Exact:  /istio-rollout-app
     route:
     - destination:
         host: istio-rollout-stable
