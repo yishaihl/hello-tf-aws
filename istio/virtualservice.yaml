@@ -6,12 +6,9 @@ spec:
   gateways:
   - istio-rollout-gateway
   hosts:
-  - istio.dev.tiktak.egged.co.il	
+  - aeda875d05add45e186a3c8def340125-1332734139.us-east-1.elb.amazonaws.com	
   http:
   - name: primary
-  - match:
-    - uri:
-        exact: /istio-rollout-app
     route:
     - destination:
         host: istio-rollout-stable
