@@ -9,9 +9,9 @@ spec:
   - istio.dev.tiktak.egged.co.il	
   http:
   - name: primary
-    Match:
-      Uri:
-        Exact:  /istio-rollout-app
+  - match:
+    - uri:
+        exact: /istio-rollout-app
     route:
     - destination:
         host: istio-rollout-stable
