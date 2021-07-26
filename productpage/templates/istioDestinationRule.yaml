@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: product-page-destination-rule
+  labels:
+    chart: {{ template "productpage.chart" . }}
+    release: {{ .Release.Name }}
+spec:
+  host: {{ .Values.service.name }}.{{.Release.Namespace}}.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+  subsets:
+  - name: production
+    labels:
+      canary: "false"
+  - name: canary
+    labels:
+      canary: "true"

@@ -1,0 +1,40 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "productpage.fullname" . }}canary
+  labels:
+    app: {{ template "productpage.name" . }}
+    canary: "true"
+    chart: {{ template "productpage.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.canaryDeployment.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "productpage.name" . }}
+      canary: "true"
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "productpage.name" . }}
+        canary: "true"
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}canary
+          image: "{{ .Values.canaryDeployment.image.repository }}:{{ .Values.canaryDeployment.image.tag }}"
+          imagePullPolicy: {{ .Values.canaryDeployment.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
