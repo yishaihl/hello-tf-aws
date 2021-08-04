@@ -5,8 +5,10 @@ metadata:
 spec:
   # this analysis template requires a service name and namespace to be supplied to the query
   args:
-  - name: service
-  - name: namespace
+  - name: service-name
+    value: istio-rollout-canary.rollouts-demo-istio.svc.cluster.local
+  # - name: namespace
+  #   value: rollouts-demo-istio
   metrics:
   - name: success-rate
     initialDelay: 60s
@@ -18,11 +20,11 @@ spec:
         query: >+
           sum(irate(istio_requests_total{
             reporter="source",
-            destination_service=~"{{args.service}}.{{args.namespace}}.svc.cluster.local",
+            destination_service=~"{{args.service-name}}",
             response_code!~"5.*"}[40s])
           )
           /
           sum(irate(istio_requests_total{
             reporter="source",
-            destination_service=~"{{args.service}}.{{args.namespace}}.svc.cluster.local"}[40s])
+            destination_service=~"{{args.service-name}}"}[40s])
           )
